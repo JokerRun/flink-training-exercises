@@ -2307,3 +2307,244 @@ rideId                    taxiId                  driverId
 - [Training from Ververica](https://ververica.com/training)
 - [Ververica blog](https://ververica.com/blog)
 - [*Stream Processing with Apache Flink*, by Hueske and Kalavri](https://www.oreilly.com/library/view/stream-processing-with/9781491974285/)
+
+
+
+
+
+# Z.TreeSrc
+
+```bash
+.
+├── main
+│   ├── java
+│   │   └── com
+│   │       └── dataartisans
+│   │           └── flinktraining
+│   │               ├── dataset_preparation
+│   │               │   └── MBoxParser.java
+│   │               ├── examples
+│   │               │   ├── dataset_java
+│   │               │   │   ├── mail_count
+│   │               │   │   │   └── MailCount.java
+│   │               │   │   ├── reply_graph
+│   │               │   │   │   └── ReplyGraph.java
+│   │               │   │   └── tf_idf
+│   │               │   │       └── MailTFIDF.java
+│   │               │   ├── datastream_java
+│   │               │   │   ├── basics
+│   │               │   │   │   └── RideCount.java
+│   │               │   │   ├── broadcast
+│   │               │   │   │   └── BroadcastState.java
+│   │               │   │   ├── cep
+│   │               │   │   │   ├── DrivingSegments.java
+│   │               │   │   │   └── Sort.java
+│   │               │   │   ├── connectors
+│   │               │   │   │   ├── PopularPlacesFromKafka.java
+│   │               │   │   │   ├── PopularPlacesToES.java
+│   │               │   │   │   └── RideCleansingToKafka.java
+│   │               │   │   ├── process
+│   │               │   │   │   └── CarEventSort.java
+│   │               │   │   ├── state
+│   │               │   │   │   └── TravelTimePrediction.java
+│   │               │   │   └── windows
+│   │               │   │       ├── DrivingSegments.java
+│   │               │   │       ├── DrivingSessions.java
+│   │               │   │       └── WhyLate.java
+│   │               │   ├── gelly_java
+│   │               │   │   └── PageRankWithEdgeWeights.java
+│   │               │   └── table_java
+│   │               │       ├── batch
+│   │               │       │   └── memberotm
+│   │               │       │       └── MemberOTMonth.java
+│   │               │       ├── catalog
+│   │               │       │   └── TaxiDataCatalog.java
+│   │               │       ├── descriptors
+│   │               │       │   ├── TaxiFares.java
+│   │               │       │   ├── TaxiFaresValidator.java
+│   │               │       │   ├── TaxiRides.java
+│   │               │       │   └── TaxiRidesValidator.java
+│   │               │       ├── examples
+│   │               │       │   ├── RidesPerHour.java
+│   │               │       │   └── ViaCatalog.java
+│   │               │       ├── sources
+│   │               │       │   ├── TaxiFareTableSource.java
+│   │               │       │   ├── TaxiFareTableSourceFactory.java
+│   │               │       │   ├── TaxiRideTableSource.java
+│   │               │       │   └── TaxiRideTableSourceFactory.java
+│   │               │       └── stream
+│   │               │           ├── Sort.java
+│   │               │           └── popularPlaces
+│   │               │               ├── PopularPlacesSql.java
+│   │               │               └── PopularPlacesTableApi.java
+│   │               ├── exercises
+│   │               │   └── datastream_java
+│   │               │       ├── basics
+│   │               │       │   └── RideCleansingExercise.java
+│   │               │       ├── broadcast
+│   │               │       │   ├── NearestTaxiExercise.java
+│   │               │       │   ├── OngoingRidesExercise.java
+│   │               │       │   └── TaxiQueryExercise.java
+│   │               │       ├── cep
+│   │               │       │   └── LongRidesExercise.java
+│   │               │       ├── datatypes
+│   │               │       │   ├── ConnectedCarEvent.java
+│   │               │       │   ├── Customer.java
+│   │               │       │   ├── EnrichedTrade.java
+│   │               │       │   ├── GapSegment.java
+│   │               │       │   ├── Segment.java
+│   │               │       │   ├── StoppedSegment.java
+│   │               │       │   ├── TaxiFare.java
+│   │               │       │   ├── TaxiRide.java
+│   │               │       │   └── Trade.java
+│   │               │       ├── process
+│   │               │       │   ├── EventTimeJoinExercise.java
+│   │               │       │   ├── ExpiringStateExercise.java
+│   │               │       │   ├── LongRidesExercise.java
+│   │               │       │   └── ProcessingTimeJoinExercise.java
+│   │               │       ├── sources
+│   │               │       │   ├── CheckpointedTaxiFareSource.java
+│   │               │       │   ├── CheckpointedTaxiRideSource.java
+│   │               │       │   ├── FinSources.java
+│   │               │       │   ├── TaxiFareSource.java
+│   │               │       │   └── TaxiRideSource.java
+│   │               │       ├── state
+│   │               │       │   └── RidesAndFaresExercise.java
+│   │               │       ├── utils
+│   │               │       │   ├── ConnectedCarAssigner.java
+│   │               │       │   ├── ExerciseBase.java
+│   │               │       │   ├── GeoUtils.java
+│   │               │       │   ├── MissingSolutionException.java
+│   │               │       │   ├── TaxiRideSchema.java
+│   │               │       │   ├── TimeDiff.java
+│   │               │       │   ├── TravelTimePredictionModel.java
+│   │               │       │   └── influxdb
+│   │               │       │       ├── DataPoint.java
+│   │               │       │       ├── InfluxDBSink.java
+│   │               │       │       └── KeyedDataPoint.java
+│   │               │       └── windows
+│   │               │           ├── HourlyTipsExercise.java
+│   │               │           └── PopularPlacesExercise.java
+│   │               └── solutions
+│   │                   └── datastream_java
+│   │                       ├── basics
+│   │                       │   └── RideCleansingSolution.java
+│   │                       ├── broadcast
+│   │                       │   ├── NearestTaxiSolution.java
+│   │                       │   ├── NearestTaxiWithCleanupSolution.java
+│   │                       │   ├── OngoingRidesSolution.java
+│   │                       │   └── TaxiQuerySolution.java
+│   │                       ├── cep
+│   │                       │   └── LongRidesSolution.java
+│   │                       ├── process
+│   │                       │   ├── CheckpointedLongRidesSolution.java
+│   │                       │   ├── ExpiringStateSolution.java
+│   │                       │   └── LongRidesSolution.java
+│   │                       ├── state
+│   │                       │   └── RidesAndFaresSolution.java
+│   │                       └── windows
+│   │                           ├── HourlyTipsSolution.java
+│   │                           └── PopularPlacesSolution.java
+│   ├── resources
+│   │   └── META-INF
+│   │       └── services
+│   │           └── org.apache.flink.table.factories.TableFactory
+│   ├── scala
+│   │   └── com
+│   │       └── dataartisans
+│   │           └── flinktraining
+│   │               ├── examples
+│   │               │   ├── dataset_scala
+│   │               │   │   ├── mail_count
+│   │               │   │   │   └── MailCount.scala
+│   │               │   │   ├── reply_graph
+│   │               │   │   │   └── ReplyGraph.scala
+│   │               │   │   └── tf_idf
+│   │               │   │       └── MailTFIDF.scala
+│   │               │   ├── datastream_scala
+│   │               │   │   ├── connectors
+│   │               │   │   │   ├── PopularPlacesFromKafka.scala
+│   │               │   │   │   ├── PopularPlacesToES.scala
+│   │               │   │   │   └── RideCleansingToKafka.scala
+│   │               │   │   └── state
+│   │               │   │       └── TravelTimePrediction.scala
+│   │               │   ├── gelly_scala
+│   │               │   │   └── PageRankWithEdgeWeights.scala
+│   │               │   └── table_scala
+│   │               │       ├── batch
+│   │               │       │   └── memberotm
+│   │               │       │       └── MemberOTMonth.scala
+│   │               │       └── stream
+│   │               │           └── popularPlaces
+│   │               │               ├── PopularPlacesSql.scala
+│   │               │               └── PopularPlacesTableApi.scala
+│   │               ├── exercises
+│   │               │   └── datastream_scala
+│   │               │       ├── basics
+│   │               │       │   └── RideCleansingExercise.scala
+│   │               │       ├── broadcast
+│   │               │       │   └── NearestTaxiExercise.scala
+│   │               │       ├── cep
+│   │               │       │   └── LongRidesExercise.scala
+│   │               │       ├── process
+│   │               │       │   ├── ExpiringStateExercise.scala
+│   │               │       │   └── LongRidesExercise.scala
+│   │               │       ├── sources
+│   │               │       │   └── FinSources.scala
+│   │               │       ├── state
+│   │               │       │   └── RidesAndFaresExercise.scala
+│   │               │       └── windows
+│   │               │           ├── HourlyTipsExercise.scala
+│   │               │           └── PopularPlacesExercise.scala
+│   │               └── solutions
+│   │                   └── datastream_scala
+│   │                       ├── basics
+│   │                       │   └── RideCleansingSolution.scala
+│   │                       ├── broadcast
+│   │                       │   └── NearestTaxiSolution.scala
+│   │                       ├── cep
+│   │                       │   └── LongRidesSolution.scala
+│   │                       ├── process
+│   │                       │   ├── CheckpointedLongRidesSolution.scala
+│   │                       │   ├── ExpiringStateSolution.scala
+│   │                       │   └── LongRidesSolution.scala
+│   │                       ├── state
+│   │                       │   └── RidesAndFaresSolution.scala
+│   │                       └── windows
+│   │                           ├── HourlyTipsSolution.scala
+│   │                           └── PopularPlacesSolution.scala
+│   └── scripts
+│       ├── convertFares.sh
+│       └── convertTrips.sh
+└── test
+    └── java
+        └── com
+            └── dataartisans
+                └── flinktraining
+                    └── exercises
+                        └── datastream_java
+                            ├── basics
+                            │   ├── RideCleansingScalaTest.java
+                            │   └── RideCleansingTest.java
+                            ├── broadcast
+                            │   └── TaxiQueryTest.java
+                            ├── process
+                            │   ├── EventTimeJoinTest.java
+                            │   ├── ExpiringStateScalaTest.java
+                            │   ├── ExpiringStateTest.java
+                            │   ├── LongRidesScalaTest.java
+                            │   └── LongRidesTest.java
+                            ├── state
+                            │   ├── RidesAndFaresScalaTest.java
+                            │   └── RidesAndFaresTest.java
+                            ├── testing
+                            │   ├── TaxiRideTestBase.java
+                            │   └── TestSource.java
+                            └── windows
+                                ├── HourlyTipsScalaTest.java
+                                ├── HourlyTipsTest.java
+                                ├── PopularPlacesScalaTest.java
+                                └── PopularPlacesTest.java
+
+```
+
