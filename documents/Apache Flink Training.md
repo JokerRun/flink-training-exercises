@@ -2,7 +2,7 @@
 
 [Apache Flink®](https://flink.apache.org/) is an open source platform for scalable stream and batch data processing. It offers expressive APIs to define batch and streaming data flow programs and a robust and scalable engine to execute these jobs.
 
-### Goals and Scope of this Training
+##  Goals and Scope of this Training
 
 This training presents an opinionated introduction to Apache Flink, including just enough to get you started writing scalable streaming ETL, analytics, and event-driven applications, while leaving out a lot of (ultimately important) details. The focus is on providing straightforward introductions to Flink’s APIs for managing state and time, with the expectation that having mastered these fundamentals, you’ll be much better equipped to pick up the rest of what you need to know from the documentation.
 
@@ -23,11 +23,11 @@ Specifically, you will learn:
 
 
 
-# A.1Streaming with Apache Flink
+## A.1Streaming with Apache Flink
 
 During this training we are going to focus on four critical concepts: continuous processing of streaming data, event time, stateful stream processing, and state snapshots. In this section we introduce these concepts.
 
-## Stream Processing
+###  Stream Processing
 
 Streams are data’s natural habitat. Whether it’s events from web servers, trades from a stock exchange, or sensor readings from a machine on a factory floor, data is created as part of a stream. But when we analyze data, we can either organize our processing around *bounded* or *unbounded* streams, and which of these paradigms we choose has profound consequences.
 
@@ -45,7 +45,7 @@ An application may consume real-time data from streaming sources such as message
 
 ![Flink application with sources and sinks](assets/flink-application-sources-sinks.png)
 
-## Timely Stream Processing
+###  Timely Stream Processing
 
 For most streaming applications it is very valuable to be able re-process historic data with the same code that is used to process live data – and to produce deterministic, consistent results, regardless.
 
@@ -53,7 +53,7 @@ It can also be crucial to pay attention to the order in which events occurred, r
 
 These requirements for timely stream processing can be met by using event-time timestamps that are recorded in the data stream, rather than using the clocks of the machines processing the data.
 
-## Stateful Stream Processing
+###  Stateful Stream Processing
 
 Flink’s operations can be stateful. This means that how one event is handled can depend on the accumulated effect of all the events that came before it. State may be used for something simple, such as counting events per minute to display on a dashboard, or for something more complex, such as computing features for a fraud detection model.
 
@@ -69,11 +69,11 @@ State is always accessed locally, which helps Flink applications achieve high th
 
 ![State is local](assets/local-state.png)
 
-## Robust Stream Processing
+###  Robust Stream Processing
 
 Flink is able to provide fault-tolerant, exactly-once semantics through a combination of state snapshots and stream replay. These snapshots capture the entire state of the distributed pipeline, recording offsets into the input queues as well as the state throughout the job graph that has resulted from having ingested the data up to that point. When a failure occurs, the sources are rewound, the state is restored, and processing is resumed. As depicted above, these state snapshots are captured asynchronously, without impeding the ongoing processing.
 
-## Further Reading
+###  Further Reading
 
 - [What is Apache Flink](https://flink.apache.org/flink-architecture.html) (Apache Flink Project Description)
 - [Flink’s Dataflow Programming Model](https://ci.apache.org/projects/flink/flink-docs-stable/concepts/programming-model.html) (Apache Flink Documentation)
@@ -84,7 +84,7 @@ Flink is able to provide fault-tolerant, exactly-once semantics through a combin
 
 
 
-# A.2.What can be Streamed?
+## A.2.What can be Streamed?
 
 Flink’s DataStream APIs for Java and Scala will let you stream anything they can serialize. Flink’s own serializer is used for
 
@@ -93,9 +93,9 @@ Flink’s DataStream APIs for Java and Scala will let you stream anything they c
 
 and Flink falls back to Kryo for other types.
 
-### Java
+####  Java
 
-#### Tuples
+#####  Tuples
 
 For Java, Flink defines its own Tuple1 thru Tuple25 types.
 
@@ -107,7 +107,7 @@ String name = person.f0;
 Integer age = person.f1;
 ```
 
-#### POJOs
+#####  POJOs
 
 A POJO (plain old Java object) is any Java class that
 
@@ -131,11 +131,11 @@ public class Person {
 Person person = new Person("Fred Flintstone", 35);
 ```
 
-### Scala tuples and case classes
+####  Scala tuples and case classes
 
 These work just as you’d expect.
 
-## Further Reading
+###  Further Reading
 
 - [Data Types & Serialization](https://ci.apache.org/projects/flink/flink-docs-stable/dev/types_serialization.html) (Apache Flink Documentation)
 - [State Schema Evolution](https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/state/schema_evolution.html) (Apache Flink Documentation)
@@ -146,7 +146,7 @@ These work just as you’d expect.
 
 
 
-# A.3.A Complete Example
+## A.3.A Complete Example
 
 This example takes a stream of records about people as input, and filters it to only include the adults.
 
@@ -195,7 +195,7 @@ public class Example {
 }
 ```
 
-### Stream execution environment
+####  Stream execution environment
 
 Every Flink application needs an execution environment, `env` in this example. Streaming applications should use a `StreamExecutionEnvironment`.
 
@@ -207,7 +207,7 @@ Note that if you don’t call execute(), your application won’t be run.
 
 This distributed runtime depends on your application being serializable. It also requires that all dependencies are available to each node in the cluster.
 
-### Basic stream sources
+####  Basic stream sources
 
 In the example above we construct a `DataStream<Person>` using `env.fromElements(...)`. This is a convenient way to throw together a simple stream for use in a prototype or test. There is also a `fromCollection(Collection)` method on `StreamExecutionEnvironment`. We could’ve done this instead:
 
@@ -235,7 +235,7 @@ DataStream<String> lines = env.readTextFile("file:///path");
 
 In real applications the most commonly used data sources are those that support low-latency, high throughput parallel reads in combination with rewind and replay – the prerequisites for high performance and fault tolerance – such as Apache Kafka, Kinesis, and various filesystems. REST APIs and databases are also frequently used for stream enrichment.
 
-### Basic stream sinks
+####  Basic stream sinks
 
 The example above uses `adults.print()` to print its results to the task manager logs (which will appear in your IDE’s console, when running in an IDE). This will call `toString()` on each element of the stream.
 
@@ -268,7 +268,7 @@ stream.writeToSocket(host, port, SerializationSchema)
 
 In production, commonly used sinks include Kafka as well as various databases and filesystems.
 
-### Debugging
+####  Debugging
 
 In production you will submit an application JAR file to a remote cluster where your application will run. If it fails, it will also fail remotely. The job manager and task manager logs can be very helpful in debugging such failures, but it’s much easier to do local debugging inside an IDE, which is something that Flink supports. You can set breakpoints, examine local variables, and step through your code. You can also step into Flink’s code, which can be a great way to learn more about its internals if you are curious to see how Flink works.
 
@@ -282,11 +282,11 @@ In production you will submit an application JAR file to a remote cluster where 
 
 
 
-#B.1.Setup your Development Environment
+## B.1.Setup your Development Environment
 
 The following instructions guide you through the process of setting up a development environment for the purpose of developing, debugging, and executing solutions to the training exercises and examples on this site.
 
-### 1. Software requirements
+####  1. Software requirements
 
 Flink supports Linux, OS X, and Windows as development environments for Flink programs and local execution. The following software is required for a Flink development setup and should be installed on your system:
 
@@ -299,7 +299,7 @@ Note that older and newer versions of Java are not supported. **Only Java 8 will
 
 **Note for Windows users:** Many of the examples of shell commands provided in the training instructions are for UNIX systems. To make things easier, you may find it worthwhile to setup cygwin or WSL, but you can use the provided .bat scripts with plain cmd. For developing Flink jobs, Windows works reasonably well: you can run a Flink cluster on a single machine, submit jobs, run the webUI, and execute jobs in the IDE.
 
-### 2. Clone and build the flink-training-exercises project
+####  2. Clone and build the flink-training-exercises project
 
 The `flink-training-exercises` project contains exercises, tests, and reference solutions for the programming exercises, as well as an extensive collection of examples. Clone the `flink-training-exercises` project from Github and build it.
 
@@ -313,7 +313,7 @@ If you haven’t done this before, at this point you’ll end up downloading all
 
 If all of the tests pass and the build is successful, you are off to a good start.
 
-### 3. Import the flink-training-exercises project into your IDE
+####  3. Import the flink-training-exercises project into your IDE
 
 The project needs to be imported into your IDE.
 
@@ -347,7 +347,7 @@ The project needs to be imported into your IDE.
 
 You should now be able to open com.dataartisans.flinktraining.exercises.datastream_java.basics.RideCleansingTest and successfully run this test.
 
-### 4. Download the data sets
+####  4. Download the data sets
 
 You can download the taxi data files used in this training by running the following commands
 
@@ -374,11 +374,11 @@ If you want to use the SQL client, see [Setting up the SQL Client](https://train
 
 
 
-# B.2.Using the Taxi Data Streams
+## B.2.Using the Taxi Data Streams
 
 The [New York City Taxi & Limousine Commission](http://www.nyc.gov/html/tlc/html/home/home.shtml) provides a public [data set](https://uofi.app.box.com/NYCtaxidata) about taxi rides in New York City from 2009 to 2015. We use a modified subset of this data to generate streams of events about taxi rides.
 
-### 1. Download the taxi data files
+####  1. Download the taxi data files
 
 You can download the taxi data files by running the following commands
 
@@ -389,7 +389,7 @@ wget http://training.ververica.com/trainingData/nycTaxiFares.gz
 
 It doesn’t matter if you use wget or something else to fetch these files, but however you get the data, **do not decompress or rename the .gz files**.
 
-### 2. Schema of Taxi Ride Events
+####  2. Schema of Taxi Ride Events
 
 Our taxi data set contains information about individual taxi rides in New York City. Each ride is represented by two events: a trip start, and a trip end event. Each event consists of eleven fields:
 
@@ -423,7 +423,7 @@ tolls          : Float     // tolls for this ride
 totalFare      : Float     // total fare collected
 ```
 
-### 3. Generate a Taxi Ride Data Stream in a Flink program
+####  3. Generate a Taxi Ride Data Stream in a Flink program
 
 **Note: Many of the exercises already provide code for working with these taxi ride data streams.**
 
@@ -435,17 +435,17 @@ For these exercises, a speed-up factor of 600 or more (i.e., 10 minutes of event
 
 All exercises should be implemented using event-time characteristics. Event-time decouples the program semantics from serving speed and guarantees consistent results even in case of historic data or data which is delivered out-of-order.
 
-#### Checkpointing
+#####  Checkpointing
 
 Some of the exercises will expect you to use `CheckpointedTaxiRideSource` and/or `CheckpointedTaxiFareSource`instead. Unlike `TaxiRideSource` and `TaxiFareSource`, these variants are able to checkpoint their state.
 
-#### Table Sources
+#####  Table Sources
 
 Note also that there are `TaxiRideTableSource` and `TaxiFareTableSource` table sources available for use with the Table and SQL APIs.
 
-### How to use these sources
+####  How to use these sources
 
-#### Java
+#####  Java
 
 ```java
 // get an ExecutionEnvironment
@@ -459,7 +459,7 @@ DataStream<TaxiRide> rides = env.addSource(
   new TaxiRideSource("/path/to/nycTaxiRides.gz", maxDelay, servingSpeed));
 ```
 
-#### Scala
+#####  Scala
 
 ```scala
 // get an ExecutionEnvironment
@@ -474,7 +474,7 @@ val rides = env.addSource(
 
 There is also a `TaxiFareSource` that works in an analogous fashion, using the nycTaxiFares.gz file. This source creates a stream of `TaxiFare` events.
 
-#### Java
+#####  Java
 
 ```java
 // get the taxi fare data stream
@@ -482,7 +482,7 @@ DataStream<TaxiFare> fares = env.addSource(
   new TaxiFareSource("/path/to/nycTaxiFares.gz", maxDelay, servingSpeed));
 ```
 
-#### Scala
+#####  Scala
 
 ```scala
 // get the taxi fare data stream
@@ -494,7 +494,7 @@ val fares = env.addSource(
 
 
 
-# B.3.How to do the Labs
+## B.3.How to do the Labs
 
 In the hands-on sessions you will implement Flink programs using various Flink APIs. You will also learn how to package a Flink program using Apache Maven and execute the packaged program on a running Flink instance.
 
@@ -502,11 +502,11 @@ The following steps guide you through the process of using the provided data str
 
 We assume you have setup your development environment according to our [setup guide](https://training.ververica.com/devEnvSetup.html), and have a local clone of the [flink-training-exercises](https://github.com/dataArtisans/flink-training-exercises.git) repo from github.
 
-### 1. Learn about the data
+####  1. Learn about the data
 
 The initial set of exercises are all based on data streams of events about taxi rides and taxi fares. These streams are produced by source functions which reads data from input files. Please read these [instructions](https://training.ververica.com/setup/taxiData.html) to learn how to use them.
 
-### 2. Modify `ExerciseBase`
+####  2. Modify `ExerciseBase`
 
 After downloading the datasets, open the `com.dataartisans.flinktraining.exercises.datastream_java.utils.ExerciseBase` class in your IDE, and edit these two lines to point to the two taxi ride data files you have downloaded:
 
@@ -517,7 +517,7 @@ public final static String pathToFareData =
     "/Users/david/stuff/flink-training/trainingData/nycTaxiFares.gz";
 ```
 
-### 3. Run and debug Flink programs in your IDE
+####  3. Run and debug Flink programs in your IDE
 
 Flink programs can be executed and debugged from within an IDE. This significantly eases the development process and provides an experience similar to working on any other Java (or Scala) application.
 
@@ -528,7 +528,7 @@ Assuming you have an IDE with the flink-training-exercises project imported, you
 - Open the `com.dataartisans.flinktraining.examples.datastream_java.basics.RideCount` class in your IDE
 - Run (or debug) the `main()` method of the `RideCountExample` class using your IDE.
 
-### 4. Exercises, Tests, and Solutions
+####  4. Exercises, Tests, and Solutions
 
 Many of these exercises include an Exercise class with most of the necessary boilerplate code for getting started, as well as a JUnit Test class with tests that will fail until you implement a proper solution, and a Solution class with a complete solution.
 
@@ -548,28 +548,28 @@ The task of the “Taxi Ride Cleansing” exercise is to cleanse a stream of Tax
 
 The `GeoUtils` utility class provides a static method `isInNYC(float lon, float lat)` to check if a location is within the NYC area.
 
-### Input Data
+####  Input Data
 
 This series of exercises is based a stream of taxi ride events. The [Taxi Data Stream instructions](https://training.ververica.com/setup/taxiData.html) show how to setup the `TaxiRideSource` which generates a stream of `TaxiRide` events.
 
-### Expected Output
+####  Expected Output
 
 The result of the exercise should be a `DataStream<TaxiRide>` that only contains events of taxi rides which both start and end in the New York City area as defined by `GeoUtils.isInNYC()`.
 
 The resulting stream should be printed to standard out.
 
-### Getting Started
+####  Getting Started
 
 Rather than following the links in this section, you'll do better to find these classes in the flink-training-exercises project in your IDE. Both IntelliJ and Eclipse have ways to make it easy to search for and navigate to classes and files. For IntelliJ, see [the help on searching](https://www.jetbrains.com/help/idea/searching-everywhere.html), or simply press the Shift key twice and then continue typing something like `RideCleansing` and then select from the choices that popup.
 
-#### Exercise Classes
+#####  Exercise Classes
 
 This exercise uses these classes:
 
 - Java: [com.dataartisans.flinktraining.exercises.datastream_java.basics.RideCleansingExercise](https://github.com/ververica/flink-training-exercises/blob/master/src/main/java/com/dataartisans/flinktraining/exercises/datastream_java/basics/RideCleansingExercise.java)
 - Scala: [com.dataartisans.flinktraining.exercises.datastream_scala.basics.RideCleansingExercise](https://github.com/ververica/flink-training-exercises/blob/master/src/main/scala/com/dataartisans/flinktraining/exercises/datastream_scala/basics/RideCleansingExercise.scala)
 
-#### Tests
+#####  Tests
 
 You will find the test for this exercise in
 
@@ -589,18 +589,18 @@ return false;
 
 in order to verify that the test does indeed fail when you make a mistake, and then work on implementing a proper solution.
 
-#### Implementation Hints
+#####  Implementation Hints
 
-> #### [Filtering Events](https://training.ververica.com/intro/rideCleansing.html#collapseThree)
+> #####  [Filtering Events](https://training.ververica.com/intro/rideCleansing.html#collapseThree)
 >
 > Flink’s DataStream API features a `DataStream.filter(FilterFunction)` transformation to filter events from a data stream. The `GeoUtils.isInNYC()` function can be called within a `FilterFunction` to check if a location is in the New York City area. Your filter function should check both the starting and ending locations of each ride.](https://training.ververica.com/intro/rideCleansing.html#collapseThree)
 
-#### Documentation
+#####  Documentation
 
 - [DataStream API](https://ci.apache.org/projects/flink/flink-docs-stable/dev/datastream_api.html)
 - [Flink JavaDocs](https://ci.apache.org/projects/flink/flink-docs-stable/api/java/)
 
-### Reference Solutions
+####  Reference Solutions
 
 Reference solutions are available at GitHub and in the training exercises project:
 
@@ -613,9 +613,9 @@ Reference solutions are available at GitHub and in the training exercises projec
 
 # [D.Transforming Data](https://training.ververica.com/intro/rideCleansing.html#collapse-13)
 
-# D.1.Stateless Transformations
+## D.1.Stateless Transformations
 
-## map()
+###  map()
 
 In the first exercise we filtered a stream of taxi ride events. In that same code base there’s a `GeoUtils` class that provides a static method `GeoUtils.mapToGridCell(float lon, float lat)` which maps a location (longitude, latitude) to a grid cell that refers to an area that is approximately 100x100 meters in size.
 
@@ -667,7 +667,7 @@ public static class Enrichment implements MapFunction<TaxiRide, EnrichedRide> {
 }
 ```
 
-## flatmap()
+###  flatmap()
 
 A `MapFunction` is suitable only when performing a one-to-one transformation: for each and every stream element coming in, `map()` will emit one transformed element. Otherwise, you’ll want to use `flatmap()`
 
@@ -696,15 +696,15 @@ public static class NYCEnrichment implements FlatMapFunction<TaxiRide, EnrichedR
 
 With the `Collector` provided in this interface, the `flatmap()` method can emit as many stream elements as you like, including none at all.
 
-## Further Reading
+###  Further Reading
 
 - [DataStream Transformations](https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/operators/#datastream-transformations) (Apache Flink Documentation)
 
 [Next](https://training.ververica.com/javascript_required.html)
 
-# D.2.Keyed Streams
+## D.2.Keyed Streams
 
-## keyBy()
+###  keyBy()
 
 It is often very useful to be able to partition a stream around one of its attributes, so that all events with the same value of that attribute are grouped together. For example, suppose we wanted to find the longest taxi rides starting in each of the grid cells. If we were thinking in terms of a SQL query, this would mean doing some sort of GROUP BY with the `startCell`, while in Flink this is done with `keyBy(KeySelector)`
 
@@ -740,7 +740,7 @@ rides
   .keyBy(ride -> ride.startCell)
 ```
 
-### Aggregations on Keyed Streams
+####  Aggregations on Keyed Streams
 
 This bit of code creates a new stream of tuples containing the `startCell` and duration (in minutes) for each end-of-ride event:
 
@@ -788,7 +788,7 @@ In the output stream we see a record for each key every time the duration reache
 1> (50797,12M)
 ```
 
-### (Implicit) State
+####  (Implicit) State
 
 This is the first example we’ve seen of stateful streaming. Though the state is being handled transparently, Flink is having to keep track of the maximum duration for each distinct key.
 
@@ -796,19 +796,19 @@ Whenever state gets involved in your application, you should think about how lar
 
 When working with streams it generally makes more sense to think in terms of aggregations over finite windows, rather than over the entire stream.
 
-### reduce() and other aggregators
+####  reduce() and other aggregators
 
 `maxBy()`, used above, is just one example of a number of aggregator functions available on Flink’s `KeyedStream`s. There is also a more general purpose `reduce()` function that you can use to implement your own custom aggregations.
 
-## Further Reading
+###  Further Reading
 
 - [DataStream Transformations](https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/operators/#datastream-transformations) (Apache Flink Documentation)
 
 
 
-# D.3.Stateful Transformations
+## D.3.Stateful Transformations
 
-## Why is Flink Involved in Managing State?
+###  Why is Flink Involved in Managing State?
 
 Your applications are certainly capable of using state without getting Flink involved in managing it – but Flink offers some compelling features for the state it manages:
 
@@ -820,7 +820,7 @@ Your applications are certainly capable of using state without getting Flink inv
 
 In this lesson you will learn how to work with Flink’s APIs that manage keyed state.
 
-## Rich Functions
+###  Rich Functions
 
 At this point we’ve already seen several of Flink’s function interfaces, including `FilterFunction`, `MapFunction`, and `FlatMapFunction`. These are all examples of the Single Abstract Method pattern.
 
@@ -834,7 +834,7 @@ For each of these interfaces, Flink also provides a so-called “rich” variant
 
 `getRuntimeContext()` provides access to a whole suite of potentially interesting things, but most notably it is how you can create and access state managed by Flink.
 
-## An Example with Keyed State
+###  An Example with Keyed State
 
 In this example we have a stream of sensor readings comprised of `Tuple2<String, Double>` events that specify the sensor ID and value for each sensor reading. Our objective is to smooth the data coming from each sensor, which we will do with a `RichMapFunction` called `Smoother`.
 
@@ -882,7 +882,7 @@ public static class Smoother extends RichMapFunction<Tuple2<String, Double>, Tup
 
 The map method in our `Smoother` is responsible for using a `MovingAverage` to smooth each event. Each time map is called with an event, that event is associated with a particular key (i.e., a particular sensor), and the methods on our `ValueState`object – `averageState` – are implicitly scoped to operate with the key for that sensor in context. So in other words, calling `averageState.value()` returns the current `MovingAverage` object for the appropriate sensor, so when we call `average.add(item.f1)` we are adding this event to the previous events for the same key (i.e., the same sensor).
 
-## Clearing State
+###  Clearing State
 
 There’s a potential problem with the example above: What will happen if the key space is unbounded? Flink is storing somewhere an instance of `MovingAverage` for every distinct key that is used. If there’s a finite fleet of sensors then this will be fine, but in applications where the set of keys is growing in an unbounded way, it’s necessary to clear the state for keys that are no longer needed. This is done by calling `clear()` on the state object, as in:
 
@@ -894,11 +894,11 @@ You might want to do this, for example, after a period of inactivity for a given
 
 There’s also a [State Time-to-Live (TTL)](https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/state/state.html#state-time-to-live-ttl) feature that was added to Flink in version 1.6. So far this has somewhat limited applicability, but can be relied upon, in some situations, to clear unneeded state.
 
-## Non-keyed State
+###  Non-keyed State
 
 It is also possible to work with managed state in non-keyed contexts. This is sometimes called *operator state*. The interfaces involved are somewhat different, and since it is unusual for user-defined functions to need non-keyed state, we won’t cover it here.
 
-## Further Reading
+###  Further Reading
 
 - [Working with State](https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/state/) (Apache Flink Documentation)
 - [Using Managed Operator State](https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/state/state.html#using-managed-operator-state) (Apache Flink Documentation)
@@ -907,7 +907,7 @@ It is also possible to work with managed state in non-keyed contexts. This is so
 
 
 
-# D.4.Connected Streams
+## D.4.Connected Streams
 
 Sometimes instead of applying a pre-defined transformation like this:
 
@@ -919,7 +919,7 @@ you want to be able to dynamically alter some aspects of the transformation – 
 
 Connected streams can also used for implementing streaming joins, a topic that’s covered in a later exercise on [enrichment joins](https://training.ververica.com/exercises/eventTimeJoins.html).
 
-## Example
+###  Example
 
 In this example a control stream is used to specify words which must be filtered out of the streamOfWords. A `RichCoFlatMapFunction` called ControlFunction is applied to the connected streams to get this done.
 
@@ -980,46 +980,46 @@ It is important to recognize that you have no control over the order in which th
 
 The goal of this exercise is to join together the `TaxiRide` and `TaxiFare` records for each ride.
 
-### Input Data
+####  Input Data
 
 For this exercise you will work with two data streams, one with `TaxiRide` events generated by a `TaxiRideSource` and the other with `TaxiFare` events generated by a `TaxiFareSource`. See [Taxi Data Streams](https://training.ververica.com/setup/taxiData.html) for information on how to download the data and how to work with these stream generators.
 
 (Note that if you want to make your solution truly fault tolerant, you can use the `CheckpointedTaxiRideSource` and `CheckpointedTaxiFareSource`.)
 
-### Expected Output
+####  Expected Output
 
 The result of this exercise is a data stream of `Tuple2<TaxiRide, TaxiFare>` records, one for each distinct `rideId`. You should ignore the END events, and only join the event for the START of each ride with its corresponding fare data.
 
 The resulting stream should be printed to standard out.
 
-### Getting Started
+####  Getting Started
 
 Rather than following these links to GitHub, you might prefer to open these classes in your IDE:
 
-#### Tests
+#####  Tests
 
 [com.dataartisans.flinktraining.exercises.datastream_java.state.RidesAndFaresTest](https://github.com/ververica/flink-training-exercises/blob/master/src/test/java/com/dataartisans/flinktraining/exercises/datastream_java/state/RidesAndFaresTest.java)
 
-#### Exercise Classes
+#####  Exercise Classes
 
 - Java: [com.dataartisans.flinktraining.exercises.datastream_java.state.RidesAndFaresExercise](https://github.com/ververica/flink-training-exercises/blob/master/src/main/java/com/dataartisans/flinktraining/exercises/datastream_java/state/RidesAndFaresExercise.java)
 - Scala: [com.dataartisans.flinktraining.exercises.datastream_scala.state.RidesAndFaresExercise](https://github.com/ververica/flink-training-exercises/blob/master/src/main/scala/com/dataartisans/flinktraining/exercises/datastream_scala/state/RidesAndFaresExercise.scala)
 
-### Implementation Hints
+####  Implementation Hints
 
-> #### [Program Structure](https://training.ververica.com/exercises/rideEnrichment-flatmap.html#collapseOne)
+> #####  [Program Structure](https://training.ververica.com/exercises/rideEnrichment-flatmap.html#collapseOne)
 >
 > You can use a `RichCoFlatMap` to implement this join operation. Note that you have no control over the order of arrival of the ride and fare records for each rideId, so you’ll need to be prepared to store either piece of information until the matching info arrives, at which point you can emit a `Tuple2<TaxiRide, TaxiFare>` joining the two records together.
 >
-> #### [Working with State](https://training.ververica.com/exercises/rideEnrichment-flatmap.html#collapseTwo)
+> #####  [Working with State](https://training.ververica.com/exercises/rideEnrichment-flatmap.html#collapseTwo)
 >
 > You should be using Flink’s managed, keyed state to buffer the data that is being held until the matching event arrives. And be sure to clear the state once it is no longer needed.
 
-### Documentation
+####  Documentation
 
 - [Working with State](https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/state/index.html)
 
-### Reference Solutions
+####  Reference Solutions
 
 Reference solutions are available at GitHub:
 
@@ -1032,13 +1032,12 @@ Reference solutions are available at GitHub:
 
 # [F.Time and Analytics](https://training.ververica.com/exercises/rideEnrichment-flatmap.html#collapse-20)
 
-# F.1.Event Time and Watermarks
+## F.1.Event Time and Watermarks
 
-## Introduction
+###  Introduction
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/zL5JWWgm3xA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" style="box-sizing: border-box; max-width: 100%;"></iframe>
-
-## Event Time
+###  Event Time
 
 Flink explicitly supports three different notions of time:
 
@@ -1048,7 +1047,7 @@ Flink explicitly supports three different notions of time:
 
 For reproducible results, e.g., when computing the maximum price a stock reached during the first hour of trading on a given day, you should use event time. In this way the result won’t depend on when the calculation is performed. This kind of real-time application is sometimes performed using processing time, but then the results are determined by the events that happen to be processed during that hour, rather than the events that occurred then. Computing analytics based on processing time causes inconsistencies, and makes it difficult to re-analyze historic data or test new implementations.
 
-### Working with Event Time
+####  Working with Event Time
 
 By default, Flink will use processing time. To change this, you can set the Time Characteristic:
 
@@ -1060,7 +1059,7 @@ env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
 If you want to use event time, you will also need to supply a Timestamp Extractor and Watermark Generator that Flink will use to track the progress of event time.
 
-## Watermarks
+###  Watermarks
 
 Let’s work through a simple example that will show why we need watermarks, and how they work.
 
@@ -1094,7 +1093,7 @@ When should our stream sorter stop waiting, and push out the 2 to start the sort
 
 We know that each event arrives after some delay, and that these delays vary, so some events are delayed more than others. One simple approach is to assume that these delays are bounded by some maximum delay. Flink refers to this strategy as *bounded-out-of-orderness* watermarking. It’s easy to imagine more complex approaches to watermarking, but for many applications a fixed delay works well enough.
 
-### Working with Watermarks
+####  Working with Watermarks
 
 In order to perform event-time-based event processing, Flink needs to know the time associated with each event, and it also needs the stream to include watermarks.
 
@@ -1118,7 +1117,7 @@ public static class MyExtractor
 
 Note that the constructor takes a parameter which specifies the maximum expected out-of-orderness (10 seconds, in this example).
 
-## Further Reading
+###  Further Reading
 
 - [How Apache Flink™ Enables New Streaming Applications](https://ververica.com/blog/how-apache-flink-enables-new-streaming-applications-part-1) (dA blog)
 - [Event Time](https://ci.apache.org/projects/flink/flink-docs-stable/dev/event_time.html) (Apache Flink Documentation)
@@ -1130,7 +1129,7 @@ Note that the constructor takes a parameter which specifies the maximum expected
 
 
 
-# F.2.Windows
+## F.2.Windows
 
 Flink features very expressive window semantics.
 
@@ -1140,7 +1139,7 @@ In this lesson you will learn:
 - which types of windows Flink supports, and
 - how to implement a DataStream program with a window aggregation
 
-## Introduction
+###  Introduction
 
 It’s natural when doing stream processing to want to compute aggregated analytics on bounded subsets of the streams in order to answer questions like these:
 
@@ -1169,7 +1168,7 @@ stream.
   .reduce|aggregate|process(<window function>)
 ```
 
-## Window Assigners
+###  Window Assigners
 
 Flink has several built-in types of window assigners, which are illustrated below:
 
@@ -1201,7 +1200,7 @@ When working with count-based windows, keep in mind that these windows will not 
 
 A global window assigner assigns every event (with the same key) to the same global window. This is only useful if you are going to do your own custom windowing, with a custom Trigger. In most cases where this might seem useful you will be better off using a `ProcessFunction` as described in [another section](https://training.ververica.com/lessons/processfunction.html).
 
-## Window Functions
+###  Window Functions
 
 You have three basic options for how to process the contents of your windows:
 
@@ -1211,7 +1210,7 @@ You have three basic options for how to process the contents of your windows:
 
 Here are examples of approaches 1 and 3. In each case we are finding the peak value from each sensor in 1 minute event-time windows, and producing a stream of Tuples containing `(key, end-of-window-timestamp, max_value)`.
 
-### ProcessWindowFunction Example
+####  ProcessWindowFunction Example
 
 ```java
 DataStream<SensorReading> input = ...
@@ -1263,7 +1262,7 @@ public abstract class Context implements java.io.Serializable {
 
 `windowState` and `globalState` are places where you can store per-key, per-window, or global per-key information. This might be useful, for example, if you want to record something about the current window and use that when processing the subsequent window.
 
-### Incremental Aggregation Example
+####  Incremental Aggregation Example
 
 ```java
 DataStream<SensorReading> input = ...
@@ -1297,7 +1296,7 @@ private static class MyWindowFunction extends ProcessWindowFunction<
 
 With this implementation we have chosen to use a more robust KeySelector. Notice also that the `Iterable<SensorReading>` will contain exactly one reading – the pre-aggregated maximum computed by `MyReducingMax`.
 
-## Late Events
+###  Late Events
 
 By default, when using event-time windows, late events are dropped. There are two optional parts of the window API that give you more control over this.
 
@@ -1328,19 +1327,19 @@ stream.
   .process(...);
 ```
 
-## Surprises
+###  Surprises
 
 Some aspects of Flink’s windowing API may not behave in the way you would expect. Based on frequently asked questions on [Stack Overflow](https://stackoverflow.com/questions/tagged/apache-flink) and the [flink-user mailing list](https://flink.apache.org/community.html#mailing-lists), here are some facts about windows that may surprise you.
 
-#### Sliding Windows Make Copies
+#####  Sliding Windows Make Copies
 
 Sliding window assigners can create lots of window objects, and will copy each event into every relevant window. For example, if you have sliding windows every 15 minutes that are 24-hours in length, each event will be copied into 4 * 24 = 96 windows.
 
-#### Time Windows are Aligned to the Epoch
+#####  Time Windows are Aligned to the Epoch
 
 Just because you are using hour-long processing-time windows and start your application running at 12:05 does not mean that the first window will close at 1:05. The first window will be 55 minutes long and close at 1:00.
 
-#### Windows Can Follow Windows
+#####  Windows Can Follow Windows
 
 For example, it works to do this:
 
@@ -1355,19 +1354,19 @@ stream
 
 You might expect Flink’s runtime to be smart enough to do this parallel pre-aggregation for you (provided you are using a ReduceFunction or AggregateFunction), but it’s not.
 
-#### No Results for Empty TimeWindows
+#####  No Results for Empty TimeWindows
 
 Windows are only created when events are assigned to them. So if there are no events in a given time frame, no results will be reported.
 
-#### Late Events Can Cause Late Merges
+#####  Late Events Can Cause Late Merges
 
 Session windows are based on an abstraction of windows that can *merge*. Each element is initially assigned to a new window, after which windows are merged whenever the gap between them is small enough. In this way, a late event can bridge the gap separating two previously separate sessions, producing a late merge.
 
-#### Evictors are Incompatible with Incremental Aggregation
+#####  Evictors are Incompatible with Incremental Aggregation
 
 This is true simply by definition – you can’t evict elements you didn’t store. But this means that designs that depend on using Evictors are adopting something of an anti-pattern.
 
-## Further Reading
+###  Further Reading
 
 - [Introducing Stream Windows in Apache Flink](http://flink.apache.org/news/2015/12/04/Introducing-windows.html) (Apache Flink blog)
 - [Windows](https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/operators/windows.html) (Apache Flink Documentation)
@@ -1378,47 +1377,47 @@ This is true simply by definition – you can’t evict elements you didn’t st
 
 # [G.Lab 3 - Windowing](https://training.ververica.com/lessons/windows.html#collapse-24)
 
-# G.1.Lab 3 - Windowed Analytics (Hourly Tips)
+## G.1.Lab 3 - Windowed Analytics (Hourly Tips)
 
 The task of the “Hourly Tips” exercise is to identify, for each hour, the driver earning the most tips. It’s easiest to approach this in two steps: first use hour-long windows that compute the total tips for each driver during the hour, and then from that stream of window results, find the driver with the maximum tip total for each hour.
 
 Please note that the program should operate in event time.
 
-### Input Data
+####  Input Data
 
 The input data of this exercise is a stream of `TaxiFare` events generated by the [Taxi Fare Stream Source](https://training.ververica.com/setup/taxiData.html).
 
 The `TaxiFareSource` annotates the generated `DataStream<TaxiFare>` with timestamps and watermarks. Hence, there is no need to provide a custom timestamp and watermark assigner in order to correctly use event time.
 
-### Expected Output
+####  Expected Output
 
 The result of this exercise is a data stream of `Tuple3<Long, Long, Float>` records, one for each hour. Each hourly record should contain the timestamp at the end of the hour, the driverId of the driver earning the most in tips during that hour, and the actual total of their tips.
 
 The resulting stream should be printed to standard out.
 
-### Getting Started
+####  Getting Started
 
-#### Tests
+#####  Tests
 
 [com.dataartisans.flinktraining.exercises.datastream_java.windows.HourlyTipsTest](https://github.com/ververica/flink-training-exercises/blob/master/src/test/java/com/dataartisans/flinktraining/exercises/datastream_java/windows/HourlyTipsTest.java)
 
-#### Exercise Classes
+#####  Exercise Classes
 
 - Java: [com.dataartisans.flinktraining.exercises.datastream_java.windows.HourlyTipsExercise](https://github.com/ververica/flink-training-exercises/blob/master/src/main/java/com/dataartisans/flinktraining/exercises/datastream_java/windows/HourlyTipsExercise.java)
 - Scala: [com.dataartisans.flinktraining.exercises.datastream_scala.windows.HourlyTipsExercise](https://github.com/ververica/flink-training-exercises/blob/master/src/main/scala/com/dataartisans/flinktraining/exercises/datastream_scala/windows/HourlyTipsExercise.scala)
 
-### Implementation Hints
+####  Implementation Hints
 
-> #### [Program Structure](https://training.ververica.com/exercises/hourlyTips.html#collapseOne)
+> #####  [Program Structure](https://training.ververica.com/exercises/hourlyTips.html#collapseOne)
 >
 > Note that it is possible to cascade one set of time windows after another, so long as the timeframes are compatible (the second set of windows needs to have a duration that is a multiple of the first set). So you can have a initial set of hour-long windows that is keyed by the driverId and use this to create a stream of (endOfHourTimestamp, driverId, totalTips), and then follow this with another hour-long window (this window is not keyed) that finds the record from the first window with the maximum totalTips.
 
-### Documentation
+####  Documentation
 
 - [Windows](https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/operators/windows.html)
 - [See the section on aggregations on windows](https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/operators/#datastream-transformations)
 
-### Reference Solutions
+####  Reference Solutions
 
 Reference solutions are available at GitHub:
 
@@ -1431,7 +1430,7 @@ Reference solutions are available at GitHub:
 
 
 
-# G.2.Lab 3 - Discussion
+## G.2.Lab 3 - Discussion
 
 The Java and Scala reference solutions illustrate two different approaches, though they have a lot of similarities. Both first compute the sum of the tips for every hour for each driver. In [HourlyTipsSolution.java](https://github.com/ververica/flink-training-exercises/blob/master/src/main/java/com/dataartisans/flinktraining/solutions/datastream_java/windows/HourlyTipsSolution.java) that looks like this,
 
@@ -1567,7 +1566,7 @@ Second, Flink will be keeping in state the maximum seen so far for each key (eac
 
 
 
-# H.1.ProcessFunction
+## H.1.ProcessFunction
 
 ProcessFunction combines event processing with timers and state, making it a powerful building block for stream processing applications. This is the basis for creating event-driven applications with Flink. It is very similar to a RichFlatMap, but with the addition of timers.
 
@@ -1616,7 +1615,7 @@ Things to be aware of:
 - A KeyedProcessFunction is a kind of RichFunction. Being a RichFunction, it has access to the open and getRuntimeContext methods needed for working with managed keyed state.
 - There are two callbacks to implement: processElement and onTimer. processElement is called with each incoming event; onTimer is called when timers fire. These can be either event-time or processing-time timers. Both callbacks are provided with a context object that can be used to interact with a `TimerService` (among other things). Both callbacks are also passed a `Collector` that can be used to emit results.
 
-#### open()
+#####  open()
 
 ```java
 @Override
@@ -1630,7 +1629,7 @@ public void open(Configuration config) {
 
 Up until now we’ve used something like `TaxiRide.class` to provide type information when creating ValueStateDescriptors. In cases where generics are involved, Flink needs more information.
 
-#### processElement()
+#####  processElement()
 
 ```java
 @Override
@@ -1654,7 +1653,7 @@ Things to consider:
 - What happens with late events? Events that are behind the watermark (i.e., late) are being dropped. If you want to do something better than this, consider using a side output, which is explained in the [next section](https://training.ververica.com/lessons/side-outputs.html).
 - We are setting an event-time timer for `event.timestamp`. This is actually a very common pattern. You can think of this as saying “please wake up me when all of the out-of-orderness affecting earlier events has been resolved.”
 
-#### onTimer()
+#####  onTimer()
 
 When the time does come that all of that out-of-orderness potentially affecting earlier events is no longer an issue, we can release all the events in the queue that are ahead of the watermark. They are correctly sorted, ready to go, and anything earlier should have arrived by now, assuming you can trust your watermarks.
 
@@ -1674,7 +1673,7 @@ public void onTimer(long timestamp, OnTimerContext context, Collector<ConnectedC
 }
 ```
 
-## Further Reading
+###  Further Reading
 
 - [ProcessFunction](https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/operators/process_function.html) (Apache Flink Documentation)
 
@@ -1682,7 +1681,7 @@ public void onTimer(long timestamp, OnTimerContext context, Collector<ConnectedC
 
 
 
-# H.2.Side Outputs
+## H.2.Side Outputs
 
 There are several good reasons to want to have more than one output stream from your Flink pipeline, such as reporting:
 
@@ -1747,7 +1746,7 @@ public static final class Tokenizer extends ProcessFunction<String, Tuple2<Strin
 }
 ```
 
-## Further Reading
+###  Further Reading
 
 - [Side Outputs](https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/side_output.html) (Apache Flink Documentation)
 
@@ -1755,7 +1754,7 @@ public static final class Tokenizer extends ProcessFunction<String, Tuple2<Strin
 
 
 
-# Lab 4 - Event-time Timers (Expiring State)
+# I.Lab 4 - Event-time Timers (Expiring State)
 
 The goal of this exercise is to join together the `TaxiRide` and `TaxiFare` records for each ride in a more robust way than we did in an [earlier exercise](https://training.ververica.com/exercises/rideEnrichment-flatmap.html).
 
@@ -1763,7 +1762,7 @@ The problem with using a `RichCoFlatMap` for this application is that in a real-
 
 You can solve this by using the timers available in a `CoProcessFunction` to eventually expire and clear any unmatched state that is being kept.
 
-### Input Data
+####  Input Data
 
 For this exercise you will work with two data streams, one with `TaxiRide` events generated by a `CheckpointedTaxiRideSource` and the other with `TaxiFare` events generated by a `CheckpointedTaxiFareSource`:
 
@@ -1776,13 +1775,13 @@ DataStream<TaxiFare> fares = env.addSource(
 
 We are recommending you use these checkpointed sources in case you want to run your solution on a cluster and experiment with making it truly fault tolerant.
 
-### Simulating Missing Data
+####  Simulating Missing Data
 
 You should arrange for some predictable fraction of the input records to be missing, so you can verify that you are correctly handling clearing the corresponding state.
 
 The exercise code does this in a `FilterFunction` on the TaxiRides. It drops all END events, and every 1000th START event.
 
-#### Java
+#####  Java
 
 ```
 DataStream<TaxiRide> rides = env
@@ -1790,7 +1789,7 @@ DataStream<TaxiRide> rides = env
     .filter((TaxiRide ride) -> (ride.isStart && (ride.rideId % 1000 != 0)))
 ```
 
-#### Scala
+#####  Scala
 
 ```
 val rides = env
@@ -1798,7 +1797,7 @@ val rides = env
   .filter { ride => ride.isStart && (ride.rideId % 1000 != 0) }
 ```
 
-### Expected Output
+####  Expected Output
 
 The result of this exercise is a data stream of `Tuple2<TaxiRide, TaxiFare>` records, one for each distinct `rideId`. You should ignore the END events, and only join the event for the START of each ride with its corresponding fare data.
 
@@ -1814,23 +1813,23 @@ Once the join is basically working, don’t bother printing the joined records. 
 4> 5000,2013004578,2013004575,2013-01-01 00:15:03,CSH,0.0,0.0,11.0
 ```
 
-### Getting Started
+####  Getting Started
 
-#### Tests
+#####  Tests
 
 [com.dataartisans.flinktraining.exercises.datastream_java.process.ExpiringStateTest](https://github.com/ververica/flink-training-exercises/blob/master/src/test/java/com/dataartisans/flinktraining/exercises/datastream_java/process/ExpiringStateTest.java)
 
-#### Exercise Classes
+#####  Exercise Classes
 
 - Java: [com.dataartisans.flinktraining.exercises.datastream_java.process.ExpiringStateExercise](https://github.com/ververica/flink-training-exercises/blob/master/src/main/java/com/dataartisans/flinktraining/exercises/datastream_java/process/ExpiringStateExercise.java)
 - Scala: [com.dataartisans.flinktraining.exercises.datastream_scala.process.ExpiringStateExercise](https://github.com/ververica/flink-training-exercises/blob/master/src/main/scala/com/dataartisans/flinktraining/exercises/datastream_scala/process/ExpiringStateExercise.scala)
 
-#### Documentation
+#####  Documentation
 
 - [ProcessFunction](https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/operators/process_function.html)
 - [Side Outputs](https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/side_output.html)
 
-### Reference Solution
+####  Reference Solution
 
 Reference solutions are available at GitHub:
 
@@ -1843,11 +1842,11 @@ Reference solutions are available at GitHub:
 
 
 
-# [Fault Tolerance](https://training.ververica.com/exercises/rideEnrichment-processfunction.html#collapse-33)
+# [J.Fault Tolerance](https://training.ververica.com/exercises/rideEnrichment-processfunction.html#collapse-33)
 
 
 
-# State Backends
+## J.1.State Backends
 
 The keyed state managed by Flink is a sort of shared, key/value store, and the working copy of each item of keyed state is kept somewhere local to the taskmanager responsible for that key the operator using that piece of state. Operator state is also local to the machine(s) that need(s) it. Flink periodically takes persistent snapshots of all the state and copies these snapshots somewhere more durable, such as a distributed file system.
 
@@ -1861,7 +1860,7 @@ When working with state kept in a heap-based state backend, accesses and updates
 
 Both state backends are able to do asynchronous snapshotting, meaning that they can take a snapshot without impeding the ongoing stream processing. This is the default behavior for the RocksDBStateBackend, whereas the heap-based state backends are synchronous by default.
 
-## Further Reading
+###  Further Reading
 
 - [State Backends](https://ci.apache.org/projects/flink/flink-docs-stable/ops/state/state_backends.html) (Apache Flink Documentation)
 
@@ -1873,16 +1872,16 @@ Both state backends are able to do asynchronous snapshotting, meaning that they 
 
 
 
-# Checkpoints and Savepoints
+## J.2.Checkpoints and Savepoints
 
-## Definitions
+###  Definitions
 
 - *Snapshot* – a generic term referring to a global, consistent image of the state of a Flink job. A snapshot includes a pointer into each of the data sources (e.g., an offset into a file or Kafka partition), as well as a copy of the state from each of the job’s stateful operators that resulted from having processed all of the events up to those positions in the sources.
 - *Checkpoint* – a snapshot taken automatically by Flink for the purpose of being able to recover from faults. Checkpoints can be incremental, and are optimized for being restored quickly.
 - *Externalized Checkpoint* – normally checkpoints are not intended to be manipulated by users. Flink retains only the *n*-most-recent checkpoints (*n* being configurable) while a job is running, and deletes them when a job is cancelled. But you can configure them to be retained instead, in which case you can manually resume from them.
 - *Savepoint* – a snapshot triggered manually by a user (or an API call) for some operational purpose, such as a stateful redeploy/upgrade/rescaling operation. Savepoints are always complete, and are optimized for operational flexibility.
 
-## How does State Snapshotting Work?
+###  How does State Snapshotting Work?
 
 Flink uses a variant of the [Chandy-Lamport algorithm](https://en.wikipedia.org/wiki/Chandy-Lamport_algorithm) known as *asynchronous barrier snapshotting*. This mechanism is described in detail in the Apache Flink project’s documentation ([link](https://ci.apache.org/projects/flink/flink-docs-stable/internals/stream_checkpointing.html)).
 
@@ -1896,7 +1895,7 @@ As each operator in the job graph receives one of these barriers, it records its
 
 Flink’s state backends use a copy-on-write mechanism to allow stream processing to continue unimpeded while older versions of the state are being asynchronously snapshotted. Only when the snapshots have been durably persisted will these older versions of the state be garbage collected.
 
-## Exactly Once Guarantees
+###  Exactly Once Guarantees
 
 When things go wrong in a stream processing application, it’s possible to have either lost, or duplicated results. With Flink, depending on the choices you make for your application and the cluster you run it on, any of these outcomes is possible:
 
@@ -1915,7 +1914,7 @@ The Flink documentation describes which of its source and sink connectors satisf
 
 If you don’t need exactly once semantics, you can gain some performance by disabling barrier alignment. This is done by configuring Flink to use `CheckpointingMode.AT_LEAST_ONCE`.
 
-## Further Reading
+###  Further Reading
 
 From the documentation:
 
@@ -1938,7 +1937,7 @@ From Flink Forward:
 
 
 
-# App Development
+# K.App Development
 
 Congratulations! If you’ve gotten this far, you’re now ready to start developing your own Flink applications.
 
@@ -1950,13 +1949,13 @@ Before you put your first application into production, be sure to review the [Pr
 
 
 
-# [More Labs](https://training.ververica.com/exercises/taxiQuery.html#collapse-38)
+# [L.More Labs](https://training.ververica.com/exercises/taxiQuery.html#collapse-38)
 
 
 
-# [Broadcast State](https://training.ververica.com/exercises/taxiQuery.html#collapse-39)
+## [L.1.Broadcast State](https://training.ververica.com/exercises/taxiQuery.html#collapse-39)
 
-# Finding the Nearest Taxi
+## L.1.1.Finding the Nearest Taxi
 
 With this exercise you will connect two streams: (1) a stream of TaxiRide events and (2) a query stream on which you can type queries. In this case a query is two comma-separated floating point numbers representing a (longitude, latitude) pair. The expected output is a stream of rides ending after the query was received, with each successive ride being closer to the requested location.
 
@@ -1980,21 +1979,21 @@ Some good locations:
 -73.977664, 40.761484     // The Museum of Modern Art
 ```
 
-### Getting Started
+####  Getting Started
 
-#### Exercise Class
+#####  Exercise Class
 
 - Java: [com.dataartisans.flinktraining.exercises.datastream_java.broadcast.NearestTaxiExercise](https://github.com/ververica/flink-training-exercises/blob/master/src/main/java/com/dataartisans/flinktraining/exercises/datastream_java/broadcast/NearestTaxiExercise.java)
 
-#### Documentation
+#####  Documentation
 
 - [Broadcast State](https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/state/broadcast_state.html)
 
-### Extra Credit
+####  Extra Credit
 
 The intent of this exercise is to support many ongoing queries simultaneously. In a real application it would make sense to think about how to eventually clear all of the state associated with obsolete queries.
 
-### Reference Solutions
+####  Reference Solutions
 
 Reference solutions are available at GitHub:
 
@@ -2002,7 +2001,7 @@ Reference solutions are available at GitHub:
   [NearestTaxiSolution.java](https://github.com/ververica/flink-training-exercises/blob/master/src/main/java/com/dataartisans/flinktraining/solutions/datastream_java/broadcast/NearestTaxiSolution.java)
   [NearestTaxiWithCleanupSolution.java](https://github.com/ververica/flink-training-exercises/blob/master/src/main/java/com/dataartisans/flinktraining/solutions/datastream_java/broadcast/NearestTaxiWithCleanupSolution.java)
 
-# Reporting Ongoing Rides
+## L.1.2.Reporting Ongoing Rides
 
 With this exercise you will connect two streams: (1) a stream of TaxiRide events and (2) a query stream on which you can type queries (a query being an integer *n* on a line by itself). The expected output is all rides which, at the time the query is processed, started at least *n* minutes ago (in event time) and haven’t yet ended.
 
@@ -2018,21 +2017,21 @@ and on Windows you can install ncat from https://nmap.org/ncat/ and then use
 ncat -lk 9999
 ```
 
-### Getting Started
+####  Getting Started
 
-#### Exercise Class
+#####  Exercise Class
 
 - Java: [com.dataartisans.flinktraining.exercises.datastream_java.broadcast.OngoingRidesExercise](https://github.com/ververica/flink-training-exercises/blob/master/src/main/java/com/dataartisans/flinktraining/exercises/datastream_java/broadcast/OngoingRidesExercise.java)
 
-#### Documentation
+#####  Documentation
 
 - [Broadcast State](https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/state/broadcast_state.html)
 
-### Extra Credit
+####  Extra Credit
 
 There’s no integration test for this exercise. How might you go about testing your solution?
 
-### Reference Solution
+####  Reference Solution
 
 Reference solutions are available at GitHub:
 
@@ -2040,7 +2039,7 @@ Reference solutions are available at GitHub:
 
 
 
-# Rules Engine
+## L.1.3.Rules Engine
 
 If you haven’t already done so, you’ll need to first [setup your Flink development environment](https://training.ververica.com/devEnvSetup.html). See [How to do the Exercises](https://training.ververica.com/setup/howto-exercises.html)for an overall introduction to these exercises.
 
@@ -2073,7 +2072,7 @@ The `TaxiQueryExercise` class we provide creates both streams, and uses [Janino]
 
 Also, since the queries can reference the current watermark of the `KeyedBroadcastProcessFunction`, you need to take care that this will work. See the Implementation Hints below for more about this.
 
-### Getting Started
+####  Getting Started
 
 On MacOS and Linux you can start the broadcast query stream via
 
@@ -2087,29 +2086,29 @@ and on Windows you can install ncat from https://nmap.org/ncat/ and then use
 ncat -lk 9999
 ```
 
-#### Tests
+#####  Tests
 
 [com.dataartisans.flinktraining.exercises.datastream_java.broadcast.TaxiQueryTest](https://github.com/ververica/flink-training-exercises/blob/master/src/test/java/com/dataartisans/flinktraining/exercises/datastream_java/broadcast/TaxiQueryTest.java)
 
-#### Exercise Class
+#####  Exercise Class
 
 - Java: [com.dataartisans.flinktraining.exercises.datastream_java.broadcast.TaxiQueryExercise](https://github.com/ververica/flink-training-exercises/blob/master/src/main/java/com/dataartisans/flinktraining/exercises/datastream_java/broadcast/TaxiQueryExercise.java)
 
-### Implementation Hints
+####  Implementation Hints
 
-> ####[Watermarking Problem](https://training.ververica.com/exercises/taxiQuery.html#collapseThree)
+> ##### [Watermarking Problem](https://training.ververica.com/exercises/taxiQuery.html#collapseThree)
 >
 > Once the two streams are connected, the Watermark of the KeyedBroadcastProcessFunction operator will be the minimum of the Watermarks of the two connected streams. Our query stream has a default Watermark at Long.MIN_VALUE, and this will hold back the event time clock of the KeyedBroadcastProcessFunction, unless we do something about it.
 >
-> #### [Watermarking Solution](https://training.ververica.com/exercises/taxiQuery.html#collapseFour)
+> #####  [Watermarking Solution](https://training.ververica.com/exercises/taxiQuery.html#collapseFour)
 >
 > It’s enough to attach an AssignerWithPeriodicWatermarks to the query stream that always returns Watermark.MAX_WATERMARK as the current Watermark.
 
-#### Documentation
+#####  Documentation
 
 - [Broadcast State](https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/state/broadcast_state.html)
 
-### Reference Solutions
+####  Reference Solutions
 
 Reference solutions are available at GitHub:
 
@@ -2122,15 +2121,15 @@ Reference solutions are available at GitHub:
 
 
 
-# Enrichment Joins
+## L.2.Enrichment Joins
 
-## Introduction
+###  Introduction
 
 The objective of this exercise is to explore techniques for enriching a stream of financial trades with customer information arriving as a stream of customer updates. There are different ways of thinking about enrichment joins, and the purpose of this exercise is to explore some variations on this theme.
 
 We’ve implemented sources for both the `Trade` and `Customer` streams. These sources are simple simulations, and only provide events about one customer, and that customer’s trades. These two streams can be joined on a `customerId` field that they have in common.
 
-#### Timing
+#####  Timing
 
 When organized by event time, these two streams behave as shown below – we first learn about the `Customer` at time 0, and then again at time 500, etc. – and the first `Trade` occurs at time 1000, and so on:
 
@@ -2140,7 +2139,7 @@ However, when looked at in processing time, both streams happen to arrive in-ord
 
 ![Streams organized by processing time](assets/join-processing-time.png)
 
-#### Data Types
+#####  Data Types
 
 The `Trade` records contain:
 
@@ -2171,18 +2170,18 @@ You will find these basic types defined here:
 - [Trade.java](https://github.com/dataArtisans/flink-training-exercises/blob/master/src/main/java/com/dataartisans/flinktraining/exercises/datastream_java/datatypes/Trade.java)
 - [EnrichedTrade.java](https://github.com/dataArtisans/flink-training-exercises/blob/master/src/main/java/com/dataartisans/flinktraining/exercises/datastream_java/datatypes/EnrichedTrade.java)
 
-## Processing Time Join
+###  Processing Time Join
 
 This is the simplest approach for implementing an enrichment join, and it is suitable for use cases, such as fraud detection, where precise, deterministic results are not imperative, and where keeping latency low is very valuable. Here the general idea is to immediately join each trade with whatever customer information is available.
 
 You will find a working implementation of such a join in the `ProcessingTimeJoinExercise` class.
 
-#### Exercise
+#####  Exercise
 
 1. Write some tests for this implementation.
 2. Thought question: `ProcessingTimeJoinExercise` implements something like an outer join (there could be a `Trade`with no matching `Customer`, in which case this implementation will produce `(Trade, null)` as its result). Are there cases where it would be worthwhile to wait for some time in case a matching `Customer` arrives? How would you go about implementing that?
 
-## Event Time Join
+###  Event Time Join
 
 Processing time joins are easy to implement, and can be produced with minimal latency, but are unsuitable for some applications. If you need reproducible, deterministic results, the enrichment should instead be done using the latest customer information that was knowable at the time of the trade.
 
@@ -2195,13 +2194,13 @@ Here’s what’s involved in doing an event time join:
 
 You will find a working implementation of such a join in the `EventTimeJoinExercise` class.
 
-#### Tests
+#####  Tests
 
 You will find tests for this implementation in
 
 [com.dataartisans.flinktraining.exercises.datastream_java.process.EventTimeJoinTest](https://github.com/ververica/flink-training-exercises/blob/master/src/test/java/com/dataartisans/flinktraining/exercises/datastream_java/process/EventTimeJoinTest.java)
 
-#### Exercise
+#####  Exercise
 
 1. Extend this implementation to handle late Trades. This will require being less aggressive about expiring Customer records.
 2. Implement a low-latency variant that immediately joins with available Customer data, if any, and then emits an updated result if a Customer update arrives.
@@ -2213,16 +2212,16 @@ You will find tests for this implementation in
 
 
 
-# Using the SQL Client
+## L.3.Using the SQL Client
 
 These instructions will show you how to use Flink’s SQL Client with the taxi data used in these exercises.
 
-### Prerequisties:
+####  Prerequisties:
 
 - If you haven’t already done so, follow [these instructions](https://training.ververica.com/devEnvSetup.html) about using git to clone, and maven with Java 8 to build, the flink-training-exercises project.
 - [Part 4 of those same instructions linked to above](https://training.ververica.com/devEnvSetup.html) explains how to download the taxi data files. Do that now, if you didn’t already.
 
-### 1. Edit sql-client-config.yaml
+####  1. Edit sql-client-config.yaml
 
 The home directory of the flink-training-exercises repository contains a file named `sql-client-config.yaml`. This file contains hardwired paths to the taxi ride and taxi fare datasets. Edit this file so that it correctly points to your copies of these files:
 
@@ -2234,11 +2233,11 @@ The home directory of the flink-training-exercises repository contains a file na
   ...
 ```
 
-### 2. Start a local flink cluster
+####  2. Start a local flink cluster
 
 Following [these instructions](https://training.ververica.com/setup/localCluster.html), download the Flink binaries and start a local flink cluster. Leave it running.
 
-### 3. Start the SQL client
+####  3. Start the SQL client
 
 ```bash
 $ cd /to/your/clone/of/flink-training-exercises
@@ -2247,7 +2246,7 @@ $ /wherever/you/put/flink/bin/sql-client.sh embedded --jar target/flink-training
 
 Windows users, please note that you will need some way to run bash scripts, such as the Windows Subsystem for Linux.
 
-### 4. Verify that it works
+####  4. Verify that it works
 
 You can list all available tables using the `SHOW TABLES` command. It lists table sources and sinks as well as views.
 
@@ -2297,7 +2296,7 @@ rideId                    taxiId                  driverId
 
 
 
-# Other Resources
+# M.Other Resources
 
 - [Setting up a Local Flink Cluster](https://training.ververica.com/setup/localCluster.html)
 - [Using the SQL Client](https://training.ververica.com/setup/sqlClient.html)
