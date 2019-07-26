@@ -141,17 +141,17 @@ public class TaxiRideSource implements SourceFunction<TaxiRide> {
 			// read first ride
 			ride = TaxiRide.fromString(line);
 			// extract starting timestamp
-			dataStartTime = getEventTime(ride);
+			dataStartTime = getEventTime(ride);//dataStartTime代表第一条时间的EventTime时间节点，即数据流起点
 			// get delayed time
 			long delayedEventTime = dataStartTime + getNormalDelayMsecs(rand);
 
-			emitSchedule.add(new Tuple2<Long, Object>(delayedEventTime, ride));
+			emitSchedule.add(new Tuple2<Long, Object>(delayedEventTime, ride));//第一条schedule为的Key为数据流起始时间节点+数据延迟到达的时间节点，Value为该Ride事件
 			// schedule next watermark
 			long watermarkTime = dataStartTime + watermarkDelayMSecs;
-			Watermark nextWatermark = new Watermark(watermarkTime - maxDelayMsecs - 1);
-			emitSchedule.add(new Tuple2<Long, Object>(watermarkTime, nextWatermark));
-
-		} else {
+			Watermark nextWatermark = new Watermark(watermarkTime - maxDelayMsecs - 1);// dataStartTime -1
+			emitSchedule.add(new Tuple2<Long, Object>(watermarkTime, nextWatermark));//第二条schedule为 {数据流起始时间节点+最大延迟时间 --> Watermark对象（起始时间节点-1)}
+            //第一个WaterMark会在数据流开始后的【最大延迟时间】后到达，并告知FlinkApplication从此刻起不再接受【起始时间节点】之前的所有数据。(如果还有，则会被路由到【SideOutput旁路输出】)
+        } else {
 			return;
 		}
 

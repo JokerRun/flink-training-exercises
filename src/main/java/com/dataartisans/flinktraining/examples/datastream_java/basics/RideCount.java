@@ -18,6 +18,7 @@ package com.dataartisans.flinktraining.examples.datastream_java.basics;
 
 import com.dataartisans.flinktraining.exercises.datastream_java.datatypes.TaxiRide;
 import com.dataartisans.flinktraining.exercises.datastream_java.sources.TaxiRideSource;
+import com.dataartisans.flinktraining.exercises.datastream_java.sources.TaxiRideSourceWithTimeKey;
 import com.dataartisans.flinktraining.exercises.datastream_java.utils.ExerciseBase;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.tuple.Tuple;
@@ -53,7 +54,7 @@ public class RideCount {
 		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
 		// start the data generator
-		DataStream<TaxiRide> rides = env.addSource(new TaxiRideSource(input, maxEventDelay, servingSpeedFactor));
+		DataStream<TaxiRide> rides = env.addSource(new TaxiRideSourceWithTimeKey(input, maxEventDelay, servingSpeedFactor));
 
 		// map each ride to a tuple of (driverId, 1)
 		DataStream<Tuple2<Long, Long>> tuples = rides.map(new MapFunction<TaxiRide, Tuple2<Long, Long>>() {
@@ -62,9 +63,10 @@ public class RideCount {
 						return new Tuple2<Long, Long>(ride.driverId, 1L) ;
 					}
 		});
-
+//        tuples.print();
 		// partition the stream by the driverId
 		KeyedStream<Tuple2<Long, Long>, Tuple> keyedByDriverId = tuples.keyBy(0);
+//		keyedByDriverId.print();
 
 		// count the rides for each driver
 		DataStream<Tuple2<Long, Long>> rideCounts = keyedByDriverId.sum(1);
